@@ -35,6 +35,8 @@ class Upstream {
         acc.push(cur);
         return acc;
       }, [])
+     .publish()
+    this.historyStream.connect();
     this.historyStream.subscribe(el => this.history = el)
   }
 
