@@ -1,6 +1,6 @@
 {
-  "name": "soop",
-  "version": "0.0.0",
+  "name": "soup-js",
+  "version": "0.0.3",
   "description": "Stream based state management for React built on RxJs",
   "main": "./dist/",
   "scripts": {

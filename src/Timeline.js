@@ -3,12 +3,31 @@ import Rx from 'rxjs/Rx';
 import Slider from './Slider';
 import TimelineUnit from './TimelineUnit';
 
-const styles = {
-    position: 'fixed',
-    backgroundColor: 'orange',
-    width: '100%',
+const STYLES = {
+  position: 'fixed',
+  backgroundColor: '#f4f4f4',
+  overflowX: 'scroll',
+  whiteSpace: 'nowrap',
+  width: '100%',
+  height: '70px',
+  bottom: '0px',
+  borderTop: '1px solid #b0b0b0'
+}
+
+const UNIT_STYLES = {
+    display: 'inline-block',
+    zIndex: 0,
     height: '70px',
-    bottom: '0px',
+    marginTop: '-70px',
+    borderLeft: '1px solid #909090',
+    width: '24px',
+    textAlign: 'center',
+    lineHeight: '70px',
+    marginLeft: '5px'
+}
+const CONTAINER_STYLE = {
+  fontWeight: '200', 
+  fontSize: '.75em'
 }
 
 class Timeline extends Component {
@@ -26,19 +45,16 @@ class Timeline extends Component {
     })
   }
   render() {
-    const styles = {
-      left: this.state.barPosition
-    }
     return (
-        <div id='timeline' style={styles}>
-          <Slider handleDrag={this.dragging} isDragging={this.state.dragging} />
-          <div id='units'>
-            {this.state.history.map((node, index) => {
-              return <TimelineUnit key={index} index={index} on={this.state.dragging} timeTravel={this.timeTravelToPointN} />
-            })
-            }
-          </div>
+      <div id='timeline' style={STYLES}>
+        <Slider handleDrag={this.dragging} isDragging={this.state.dragging} />
+        <div id='units' style={CONTAINER_STYLE}>
+          {this.state.history.map((node, index) => {
+            return <TimelineUnit key={index} styles={UNIT_STYLES} index={index} on={this.state.dragging} timeTravel={this.timeTravelToPointN} />
+          })
+          }
         </div>
+      </div>
     )
   }
 }

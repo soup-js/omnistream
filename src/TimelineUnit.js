@@ -15,7 +15,8 @@ export default class extends Component {
         this.props.on ? 
         this.props.timeTravel(this.props.index) :
         null
-      }}
+      }} 
+      style={this.props.styles}
       onDoubleClick={() =>  this.props.timeTravel(this.props.index)}
       > {this.props.index} </div>
     )

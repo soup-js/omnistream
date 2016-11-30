@@ -1,5 +1,14 @@
 import React, { Component } from 'react';
 import Rx from 'rxjs/Rx';
+//TODO: get rid of react warning that styles are being mutated
+const STYLES = {
+  width: '10px',
+  height: '70px',
+  backgroundColor: 'rgba(0, 97, 128, 0.682353)',
+  position: 'relative',
+  left: 10,
+  zIndex: 1,
+}
 
 class Slider extends Component {
   constructor(props) {
@@ -24,7 +33,7 @@ class Slider extends Component {
         return false
       }, false)
 
-     this.mouseMovement = this.currentlyDragging
+    this.mouseMovement = this.currentlyDragging
       .switchMap((value) => {
         return value ? this.mousemove : Rx.Observable.never()
       })
@@ -51,12 +60,12 @@ class Slider extends Component {
 
   render() {
     const zIndex = this.props.isDragging ? -1 : 1;
-    const styles = {
+    const updatedStyles = Object.assign({}, STYLES, {
       left: this.state.barPosition,
       'zIndex': zIndex
-    }
+    });
     return (
-      <div id="sliderBar" style={styles}></div>
+      <div id="sliderBar" style={updatedStyles}></div>
     )
   }
 }
