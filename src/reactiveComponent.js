@@ -13,21 +13,24 @@ const mapStreamsToProps = (filteredStreams, streamNames) => {
 
 // exports function to create new components that builds upon the native React component class
 export default function (componentDefinition, ...streams) {
+  console.log('reactive component');
   class ReactiveComponent extends Component {
-    constructor() {
-      super()
+    constructor(props, context) {
+      super();
       this.state = { childProps: {} }
-    }
-    componentDidMount() {
+      this.upstream = context.upstream;
+
       // make dispatch and upstream accessible to all components
-      this.dispatch = this.context.upstream.dispatch.bind(this.context.upstream);
-      const upstream = this.context.upstream;
-
+      this.dispatch = this.upstream.dispatch.bind(context.upstream);
+      
       // make dispatch side effect accessible to all components
-      this.dispatchSideEffect = this.context.upstream.dispatchSideEffect.bind(this.context.upstream);
+      this.dispatchSideEffect = this.upstream.dispatchSideEffect.bind(context.upstream);
+    }
 
+    componentDidMount() {
+      console.log('mounted');
       // creates a new substream for each action type
-      const filteredStreams = streams.map(actionType => upstream.filterForAction(actionType).startWith(null));
+      const filteredStreams = streams.map(actionType => this.upstream.filterForAction(actionType).startWith(null));
       const component$ = mapStreamsToProps(filteredStreams, streams)
       // subscribes to the props stream. This will trigger a rerender whenever a new action has been dispatched to any filtered stream passed down as props to a component
       this.subscription = component$.subscribe((props) => {
@@ -40,10 +43,14 @@ export default function (componentDefinition, ...streams) {
     }
 
     render() {
+      const dispatch = this.dispatch;
+      const dispatchSideEffect = this.dispatchSideEffect;
+      console.log('childProps', this.state.childProps);
+      console.log('rendering', Object.assign(this.state.childProps, { dispatch, dispatchSideEffect}))
       return React.createElement(componentDefinition,
-        Object.assign(this.state.childProps, { dispatch: this.dispatch, dispatchSideEffect: this.dispatchSideEffect }),
+        Object.assign(this.state.childProps, { dispatch, dispatchSideEffect}),
       null);
-}
+    }
   }
 ReactiveComponent.contextTypes = { upstream: React.PropTypes.object.isRequired }
 return ReactiveComponent;
