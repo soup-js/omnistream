@@ -41,7 +41,7 @@ export default function (componentDefinition, ...streams) {
 
     render() {
       return React.createElement(componentDefinition,
-        Object.assign(this.state.childProps, { dispatch: this.dispatch, dispatchSideEffect: this.dispatchSideEffect }}),
+        Object.assign(this.state.childProps, { dispatch: this.dispatch, dispatchSideEffect: this.dispatchSideEffect }),
       null);
 }
   }
