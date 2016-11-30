@@ -13,12 +13,11 @@ const mapStreamsToProps = (filteredStreams, streamNames) => {
 
 // exports function to create new components that builds upon the native React component class
 export default function (componentDefinition, ...streams) {
-  return class extends Component {
-    // do we need this?
-    state = { childProps: {} }
-    static contextTypes = { upstream: React.PropTypes.object.isRequired }
-
-    //
+  class ReactiveComponent extends Component {
+    constructor() {
+      super()
+      this.state =  { childProps: {} }
+    }
     componentDidMount() {
     // make dispatch and upstream accessible to all components
       this.dispatch = this.context.upstream.dispatch.bind(this.context.upstream);
@@ -42,4 +41,6 @@ export default function (componentDefinition, ...streams) {
       null);
     }
   }
+  ReactiveComponent.contextTypes = { upstream: React.PropTypes.object.isRequired }
+  return ReactiveComponent;
 }

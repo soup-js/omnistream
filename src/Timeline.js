@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Rx from 'rxjs/Rx';
 import Slider from './Slider';
 import TimelineUnit from './TimelineUnit';
-require("../styles/timeline-style.css")
 
 const styles = {
     position: 'fixed',
