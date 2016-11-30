@@ -1,8 +1,8 @@
 {
   "name": "soop",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Stream based state management for React built on RxJs",
-  "main": "index.js",
+  "main": "./dist/",
   "scripts": {
      "build": "babel src --out-dir dist"
   },

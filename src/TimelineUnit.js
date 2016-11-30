@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import Rx from 'rxjs/Rx';
-require("../styles/timeline-style.css")
 
 export default class extends Component {
 

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Rx from 'rxjs/Rx';
-require("../styles/timeline-style.css")
 
 class Slider extends Component {
   constructor(props) {
