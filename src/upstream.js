@@ -21,6 +21,12 @@ class Upstream {
     this.stream.next(data);
   }
 
+  dispatchSideEffect(streamFunction) {
+    const sideEffectStream = streamFunction(this.stream.filter(action => action).skip(1));
+    sideEffectStream.subscribe((action) => {
+      this.dispatch(action);
+    })
+  }
 
   // storing a reference to every action type that passes through the stream to clear the history by setting all actions to undefined
    recordActionTypes() {
