@@ -47,13 +47,11 @@ class Slider extends Component {
       this.setState({ barPosition: e.pageX });
     });
     currentlyDragging$.subscribe((e) => {
-      console.log('currently dragging', e);      
       this.props.handleDrag({ dragging: e });
     })
   }
 
   render() {
-    console.log('slider is dragging:', this.props.isDragging)
     const zIndex = this.props.isDragging ? -1 : 1;
     const updatedStyles = Object.assign({}, STYLES, {
       left: this.state.barPosition,

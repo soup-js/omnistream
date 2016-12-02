@@ -41,9 +41,7 @@ class Timeline extends Component {
   }
 
   setDraggingState(result) {
-    console.log('handledrag', result);
     this.setState(result);
-    console.log('state.dragging:', this.state.dragging);
   }
 
   componentDidMount() {
