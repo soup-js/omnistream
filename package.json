@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/soopjs/soop.git"
+    "url": "git+https://github.com/soup-js/soup-js.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/soopjs/soop/issues"
+    "url": "https://github.com/soup-js/soup-js/issues"
   },
-  "homepage": "https://github.com/soopjs/soop#readme",
+  "homepage": "https://github.com/soup-js/soup-js#readme",
   "dependencies": {
     "react": "^15.4.1",
     "react-dom": "^15.4.1",

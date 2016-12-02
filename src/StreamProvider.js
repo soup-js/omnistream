@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 
-// wraps the root component and allows all children to access upstream
-export class StreamProvider extends Component {
+// Wrap the root component and allow all children to access superstream through context.
+class StreamProvider extends Component {
   getChildContext() {
-    return { upstream: this.props.upstream }
+    return { superstream: this.props.superstream }
   }
 
   render() {
@@ -18,5 +18,5 @@ export class StreamProvider extends Component {
 export default StreamProvider;
 
 StreamProvider.childContextTypes = {
-  upstream: React.PropTypes.object.isRequired
+  superstream: React.PropTypes.object.isRequired
 }
