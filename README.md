@@ -1,6 +1,8 @@
 # Soup-js
 ### Soup-js is a stream-based state management library for React built on RxJs observables.
 
+![soup_360](https://cloud.githubusercontent.com/assets/4997530/20856379/22034c3a-b8c2-11e6-8b3d-dc6daffb39b2.png)
+
 Soup-js has a simple API that allows React components to selectively subscribe to portions of a central store. This avoids unnecessary re-renders without the need of `componentShouldUpdate` or other workarounds. Upon connecting, your components will always stay up to date with the store and re-render as needed. With this model, it's possible to rely nearly exclusively on stateless functional React components, creating a more reactive application structure. Soup-js also features a built-in time-travelling debugger that operates without keeping any copies of the application state (since in soup-js, the store is a stream of actions).
 
 ## Disclaimer
