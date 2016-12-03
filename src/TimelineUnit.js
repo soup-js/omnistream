@@ -3,22 +3,21 @@ import ReactDOM from 'react-dom';
 import Rx from 'rxjs/Rx';
 
 export default class extends Component {
+  handleDoubleClick() {
+    this.props.timeTravel(this.props.index);
+  } 
 
-  componentDidMount() {
-    console.log(ReactDOM.findDOMNode(this).offsetLeft);
+  handleMouseEnter() {
+    this.props.on ? this.props.timeTravel(this.props.index) : null
   }
 
   render() {
     return (
-    <div className='timeline-unit'
-      onMouseEnter={() => {
-        this.props.on ? 
-        this.props.timeTravel(this.props.index) :
-        null
-      }} 
-      style={this.props.styles}
-      onDoubleClick={() =>  this.props.timeTravel(this.props.index)}
-      > {this.props.index} </div>
+      <div className='timeline-unit' style={this.props.styles}
+        onMouseEnter={() => this.handleMouseEnter()}
+        onDoubleClick={() => this.handleDoubleClick()}>
+        {this.props.index}
+      </div>
     )
   }
 }

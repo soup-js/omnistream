@@ -15,28 +15,33 @@ const STYLES = {
 }
 
 const UNIT_STYLES = {
-    display: 'inline-block',
-    zIndex: 0,
-    height: '70px',
-    marginTop: '-70px',
-    borderLeft: '1px solid #909090',
-    width: '24px',
-    textAlign: 'center',
-    lineHeight: '70px',
-    marginLeft: '5px'
+  display: 'inline-block',
+  zIndex: 0,
+  height: '70px',
+  marginTop: '-70px',
+  borderLeft: '1px solid #909090',
+  width: '24px',
+  textAlign: 'center',
+  lineHeight: '70px',
+  marginLeft: '5px'
 }
+
 const CONTAINER_STYLE = {
-  fontWeight: '200', 
+  fontWeight: '200',
   fontSize: '.75em'
 }
 
 class Timeline extends Component {
   constructor(props) {
     super();
-    this.historyStream = props.upstream.historyStream;
-    this.state = { history: [], barPosition: '10px', dragging: false }
-    this.timeTravelToPointN = props.upstream.timeTravelToPointN.bind(props.upstream);
-    this.dragging = (result) => { this.setState(result) }
+    this.historyStream = props.superstream.historyStream;
+    this.state = { history: [], dragging: false }
+    this.timeTravelToPointN = props.superstream.timeTravelToPointN.bind(props.superstream);
+    this.setDraggingState = this.setDraggingState.bind(this);
+  }
+
+  setDraggingState(result) {
+    this.setState(result);
   }
 
   componentDidMount() {
@@ -44,10 +49,11 @@ class Timeline extends Component {
       this.setState({ history: historyArray });
     })
   }
+
   render() {
     return (
       <div id='timeline' style={STYLES}>
-        <Slider handleDrag={this.dragging} isDragging={this.state.dragging} />
+        <Slider handleDrag={this.setDraggingState} isDragging={this.state.dragging} />
         <div id='units' style={CONTAINER_STYLE}>
           {this.state.history.map((node, index) => {
             return <TimelineUnit key={index} styles={UNIT_STYLES} index={index} on={this.state.dragging} timeTravel={this.timeTravelToPointN} />
