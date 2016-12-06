@@ -8,14 +8,14 @@ class Superstream {
     // This feature allows for time travel debugging in O(n) space.
     this.history = [];
     this.store = {};
-    this.setOfAllActionTypes = {};
     this.getHistory();
-    this.recordActionTypes();
   }
 
   // Creates a state-stream with provided reducer and action stream
   createStatestream(reducer, actionStream) {
-    return actionStream(this).scan(reducer, {});
+    return actionStream(this).scan((acc, curr) => (
+      curr === 'CLEAR' ? reducer(undefined) : reducer(acc, curr)
+    ))
   }
 
   // Creates a collection of all state-streams
@@ -25,11 +25,11 @@ class Superstream {
 
   // Check whether each action dispatched has data and type properties. 
   // If so, pass the action to the superstream.
-  dispatch(data) {
-    if (!(data.hasOwnProperty('data') && data.hasOwnProperty('type'))) {
-      throw new Error('Actions dispatched to superstream must be objects with data and type properties')
+  dispatch(action) {
+    if (!(action.hasOwnProperty('type') && action !== 'CLEAR')) {
+      throw new Error('Actions dispatched to superstream must be objects with type properties')
     }
-    this.stream.next(data);
+    this.stream.next(action);
   }
   // Dispatch an observable to the superstream
   dispatchSideEffect(streamFunction) {
@@ -69,9 +69,8 @@ class Superstream {
 
   // Revert the app back to its original state
   clearState() {
-    Object.keys(this.setOfAllActionTypes).forEach(event => {
-      let action = { data: null, type: event, ignore: true }
-      this.dispatch(action);
+    Object.keys(this.store).forEach(stateStream => {
+      stateStream.next('CLEAR');
     });
   }
 
