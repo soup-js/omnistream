@@ -27,7 +27,7 @@ export default function (componentDefinition, ...streams) {
 
     componentDidMount() {
       // Creates a new substream for each action type based on the provided "streamNames"
-      const filteredStreams = streams.map(actionType => this.superstream.filterForAction(actionType).startWith(null));
+      const filteredStreams = streams.map(actionType => this.superstream.filterForActionTypes(actionType).startWith(null));
       const prop$ = mapStreamsToProps(filteredStreams, streams)
       // Subscribes to the props stream. This will trigger a re-render whenever a new action has been dispatched to 
       // any filtered stream passed down as props to a component.

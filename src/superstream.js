@@ -4,12 +4,23 @@ class Superstream {
   // Instatiates a new stream to manage state for the application
   constructor() {
     this.stream = new Rx.BehaviorSubject();
-  // Creates an array to hold all actions dispatched within an application. 
-  // This feature allows for time travel debugging in O(n) space.
+    // Creates an array to hold all actions dispatched within an application. 
+    // This feature allows for time travel debugging in O(n) space.
     this.history = [];
+    this.store = {};
     this.setOfAllActionTypes = {};
     this.getHistory();
     this.recordActionTypes();
+  }
+
+  // Creates a state-stream with provided reducer and action stream
+  createStatestream(reducer, actionStream) {
+    return actionStream(this).scan(reducer, {});
+  }
+
+  // Creates a collection of all state-streams
+  createStore(streamCollection) {
+    this.store = streamCollection;
   }
 
   // Check whether each action dispatched has data and type properties. 
@@ -29,17 +40,19 @@ class Superstream {
   }
 
   // Store a reference to every action type that passes through the stream.
-   recordActionTypes() {
+  recordActionTypes() {
     this.actionStream = this.stream.filter(action => action).map(action => action.type)
     this.actionStream.subscribe(type => this.setOfAllActionTypes[type] = true);
   }
 
   // Create an observable of data for a specific action type.
-  filterForAction(actionType) {
+  filterForActionTypes(...actionTypes) {
+    const actions = Array.isArray(actionTypes[0]) ? actionTypes[0] : actionTypes;
+    const hash = actions.reduce((acc, curr) => Object.assign(acc, {[curr]: true}), {});
+    console.log(hash);
     return this.stream.filter(action => {
-      return action ? (action.type === actionType) : action
+      return action ? (hash[action.type]) : false
     })
-      .map(action => action ? action.data : action)
   }
 
   // Create an observable that updates history when a new action is received.
@@ -49,7 +62,7 @@ class Superstream {
         acc.push(cur);
         return acc;
       }, [])
-     .publish()
+      .publish()
     this.historyStream.connect();
     this.historyStream.subscribe(el => this.history = el)
   }
@@ -62,10 +75,10 @@ class Superstream {
     });
   }
 
-  timeTravelToPointN(n){
+  timeTravelToPointN(n) {
     this.clearState();
     for (let i = 0; i <= n; i++) {
-      this.dispatch(Object.assign({ignore: true}, this.history[i]));
+      this.dispatch(Object.assign({ ignore: true }, this.history[i]));
     }
   }
 }
