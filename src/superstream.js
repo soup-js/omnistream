@@ -13,8 +13,11 @@ class Superstream {
 
   // Creates a state-stream with provided reducer and action stream
   createStatestream(reducer, actionStream) {
-    return actionStream(this).scan((acc, curr) => (
-      curr === 'CLEAR' ? reducer(undefined) : reducer(acc, curr)
+    return actionStream(this)
+      .merge(this.stream.filter(value => value ? value._clearState : false))
+      .startWith(reducer(undefined, {type: null}))
+      .scan((acc, curr) => (
+      curr._clearState ? reducer(undefined, {type: null}) : reducer(acc, curr)
     ))
   }
 
@@ -26,7 +29,7 @@ class Superstream {
   // Check whether each action dispatched has data and type properties. 
   // If so, pass the action to the superstream.
   dispatch(action) {
-    if (!(action.hasOwnProperty('type') && action !== 'CLEAR')) {
+    if (!(action.hasOwnProperty('type') && !(action._clearState))) {
       throw new Error('Actions dispatched to superstream must be objects with type properties')
     }
     this.stream.next(action);
@@ -57,8 +60,9 @@ class Superstream {
 
   // Create an observable that updates history when a new action is received.
   getHistory() {
-    this.historyStream = this.stream.filter(action => action && !action.ignore)
+    this.historyStream = this.stream.filter(action => action && !action._ignore)
       .scan((acc, cur) => {
+        console.log('current action', cur);
         acc.push(cur);
         return acc;
       }, [])
@@ -69,15 +73,13 @@ class Superstream {
 
   // Revert the app back to its original state
   clearState() {
-    Object.keys(this.store).forEach(stateStream => {
-      stateStream.next('CLEAR');
-    });
+    this.stream.next({_clearState: true, _ignore: true});
   }
 
   timeTravelToPointN(n) {
     this.clearState();
     for (let i = 0; i <= n; i++) {
-      this.dispatch(Object.assign({ ignore: true }, this.history[i]));
+      this.dispatch(Object.assign({_ignore: true }, this.history[i]));
     }
   }
 }
