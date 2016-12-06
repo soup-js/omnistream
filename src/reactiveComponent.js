@@ -3,17 +3,16 @@ import React, { Component } from 'react';
 
 // mapStreamsToProps creates an observable stream for each action type given in "streamNames". 
 // This stream emits objects that will be passed down as props to the reactive components.
-const mapStreamsToProps = (filteredStreams, streamNames) => {
-  return Rx.Observable.combineLatest(...filteredStreams, (...filteredStreams) => {
-    return streamNames.reduce((accum, curr, idx) => {
-      accum[curr] = filteredStreams[idx]
-      return accum;
-    }, {});
+const combineStreamsToState = (stateStreams) => {
+  return Rx.Observable.combineLatest(...stateStreams, (...stateData) => {
+    return stateData.reduce((accum, curr) => {
+      return Object.assign(accum, curr)
+    }, {})
   })
 }
 
 //ReactiveComponent subscribes to a stream and re-renders when it receives new data.  
-export default function (componentDefinition, ...streams) {
+export default function (componentDefinition, ...stateStreamNames) {
   class ReactiveComponent extends Component {
     constructor(props, context) {
       super();
@@ -27,11 +26,11 @@ export default function (componentDefinition, ...streams) {
 
     componentDidMount() {
       // Creates a new substream for each action type based on the provided "streamNames"
-      const filteredStreams = streams.map(actionType => this.superstream.filterForActionTypes(actionType).startWith(null));
-      const prop$ = mapStreamsToProps(filteredStreams, streams)
+      const stateStreams = stateStreamNames.map(name => this.superstream.store[name]);
+      const state$ = combineStreamsToState(stateStreams);
       // Subscribes to the props stream. This will trigger a re-render whenever a new action has been dispatched to 
       // any filtered stream passed down as props to a component.
-      this.subscription = prop$.subscribe((props) => {
+      this.subscription = state$.subscribe((props) => {
         this.setState({ childProps: props });
       });
     }
