@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import Rx from 'rxjs/Rx';
 import Slider from './Slider';
 import TimelineUnit from './TimelineUnit';
+import createSuperstream from './superstream.js';
+import { dragMovement$, currentlyDragging$ } from './actionStreams.js';
+import reducer from './reducer.js';
 
 const STYLES = {
   position: 'fixed',
@@ -31,17 +34,23 @@ const CONTAINER_STYLE = {
   fontSize: '.75em'
 }
 
-class Timeline extends Component {
-  constructor(props) {
-    super();
-    this.historyStream = props.superstream.historyStream;
-    this.state = { history: [], dragging: false }
-    this.timeTravelToPointN = props.superstream.timeTravelToPointN.bind(props.superstream);
-    this.setDraggingState = this.setDraggingState.bind(this);
-  }
 
-  setDraggingState(result) {
-    this.setState(result);
+// setup OMNISTREAMS
+const addTimelinestore = (superstream) => {
+  const sliderState$ = superstream.createStatestream(dragMovement$);
+  const draggingState$ = superstream.createStatestream(currentlyDragging$);
+  superstream.addToStore({ sliderState$, draggingState$ });
+}
+
+
+class Timeline extends Component {
+  constructor(props, context) {
+    super();
+    this.superstream = context.superstream;
+    addTimelinestore(this.superstream);
+    this.state = { history: [] };
+    this.history$ = this.superstream.history$;
+    this.timeTravelToPointN = this.superstream.timeTravelToPointN.bind(this.superstream);
   }
 
   componentDidMount() {
@@ -53,10 +62,10 @@ class Timeline extends Component {
   render() {
     return (
       <div id='timeline' style={STYLES}>
-        <Slider handleDrag={this.setDraggingState} isDragging={this.state.dragging} />
+        <Slider />
         <div id='units' style={CONTAINER_STYLE}>
           {this.state.history.map((node, index) => {
-            return <TimelineUnit key={index} styles={UNIT_STYLES} index={index} on={this.state.dragging} timeTravel={this.timeTravelToPointN} />
+            return <TimelineUnit key={index} styles={UNIT_STYLES} index={index} timeTravel={this.timeTravelToPointN} />
           })
           }
         </div>
@@ -65,5 +74,4 @@ class Timeline extends Component {
   }
 }
 
-
-export default Timeline;
+export default reactiveComponent(Timeline);

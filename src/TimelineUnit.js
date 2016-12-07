@@ -2,22 +2,19 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import Rx from 'rxjs/Rx';
 
-export default class extends Component {
-  handleDoubleClick() {
-    this.props.timeTravel(this.props.index);
-  } 
-
-  handleMouseEnter() {
-    this.props.on ? this.props.timeTravel(this.props.index) : null
+const TimelineUnit = (props) => {
+  const {dragging, index, timeTravel, styles} = props;
+  const handleMouseEnter = () => {
+    dragging ? timeTravel(index) : void 0;
   }
-
-  render() {
-    return (
-      <div className='timeline-unit' style={this.props.styles}
-        onMouseEnter={() => this.handleMouseEnter()}
-        onDoubleClick={() => this.handleDoubleClick()}>
-        {this.props.index}
-      </div>
-    )
-  }
+  
+  return (
+    <div className='timeline-unit' style={styles}
+      onMouseEnter={handleMouseEnter}
+      onDoubleClick={() => timeTravel(index)}>
+      {index}
+    </div>
+  )
 }
+
+export default reactiveComponent(TimelineUnit, 'draggingState$');

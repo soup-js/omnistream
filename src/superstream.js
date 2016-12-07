@@ -7,23 +7,27 @@ class Superstream {
     // Creates an array to hold all actions dispatched within an application. 
     // This feature allows for time travel debugging in O(n) space.
     this.history = [];
-    this.store = {};
-    this.getHistory();
+    this.history$ = this.getHistory();
+    this.store = { 'omniHistory$': this.history$ };
   }
 
   // Creates a state-stream with provided reducer and action stream
   createStatestream(reducer, actionStream) {
     return actionStream(this)
       .merge(this.stream.filter(value => value ? value._clearState : false))
-      .startWith(reducer(undefined, {type: null}))
+      .startWith(reducer(undefined, { type: null }))
       .scan((acc, curr) => (
-      curr._clearState ? reducer(undefined, {type: null}) : reducer(acc, curr)
-    ))
+        curr._clearState ? reducer(undefined, { type: null }) : reducer(acc, curr)
+      ))
   }
 
   // Creates a collection of all state-streams
   createStore(streamCollection) {
     this.store = streamCollection;
+  }
+
+  addToStore(streamCollection) {
+    this.store = Object.assign({}, this.store, streamCollection);
   }
 
   // Check whether each action dispatched has data and type properties. 
@@ -35,11 +39,9 @@ class Superstream {
     this.stream.next(action);
   }
   // Dispatch an observable to the superstream
-  dispatchSideEffect(streamFunction) {
+  dispatchObservableFn(streamFunction) {
     const sideEffectStream = streamFunction(this.stream.filter(action => action).skip(1));
-    sideEffectStream.subscribe((action) => {
-      this.dispatch(action);
-    })
+    this.stream = this.stream.merge(sideEffectStream);
   }
 
   // Store a reference to every action type that passes through the stream.
@@ -51,7 +53,7 @@ class Superstream {
   // Create an observable of data for a specific action type.
   filterForActionTypes(...actionTypes) {
     const actions = Array.isArray(actionTypes[0]) ? actionTypes[0] : actionTypes;
-    const hash = actions.reduce((acc, curr) => Object.assign(acc, {[curr]: true}), {});
+    const hash = actions.reduce((acc, curr) => Object.assign(acc, { [curr]: true }), {});
     console.log(hash);
     return this.stream.filter(action => {
       return action ? (hash[action.type]) : false
@@ -60,26 +62,27 @@ class Superstream {
 
   // Create an observable that updates history when a new action is received.
   getHistory() {
-    this.historyStream = this.stream.filter(action => action && !action._ignore)
+    const history$ = this.stream.filter(action => action && !action._ignore)
       .scan((acc, cur) => {
         console.log('current action', cur);
         acc.push(cur);
         return acc;
       }, [])
       .publish()
-    this.historyStream.connect();
-    this.historyStream.subscribe(el => this.history = el)
+    this.history$.connect();
+    this.history$.subscribe(el => this.history = el)
+    return history$
   }
 
   // Revert the app back to its original state
   clearState() {
-    this.stream.next({_clearState: true, _ignore: true});
+    this.stream.next({ _clearState: true, _ignore: true });
   }
 
   timeTravelToPointN(n) {
     this.clearState();
     for (let i = 0; i <= n; i++) {
-      this.dispatch(Object.assign({_ignore: true }, this.history[i]));
+      this.dispatch(Object.assign({ _ignore: true }, this.history[i]));
     }
   }
 }
