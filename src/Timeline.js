@@ -60,14 +60,14 @@ class Timeline extends Component {
   }
 
   render() {
+    const units = this.state.history.map((node, index) => {
+      return <TimelineUnit key={node} styles={UNIT_STYLES} index={index} timeTravel={this.timeTravelToPointN} />
+    })
     return (
       <div id='timeline' style={STYLES}>
         <Slider />
         <div id='units' style={CONTAINER_STYLE}>
-          {this.state.history.map((node, index) => {
-            return <TimelineUnit key={index} styles={UNIT_STYLES} index={index} timeTravel={this.timeTravelToPointN} />
-          })
-          }
+          {units}
         </div>
       </div>
     )

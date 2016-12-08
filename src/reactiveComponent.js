@@ -31,7 +31,7 @@ export default function (componentDefinition, ...stateStreamNames) {
       // Subscribes to the props stream. This will trigger a re-render whenever a new action has been dispatched to 
       // any filtered stream passed down as props to a component.
       this.subscription = state$.subscribe((props) => {
-        this.setState({ childProps: Object.assign({}, this.state.childProps) });
+        this.setState({ childProps: Object.assign({}, this.props, props) });
       });
     }
 
