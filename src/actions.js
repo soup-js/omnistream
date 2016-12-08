@@ -1,11 +1,11 @@
-export default dragMovement = (coordinate) => (
-  { type: 'BAR_MOVE', barPosition: coordinate }
+export const drag = (coordinate) => (
+  { type: 'BAR_MOVE', barPosition: coordinate, _ignore: true }
 )
 
-export default stopDragging = () => (
-  { type: 'STOP_DRAG' }
+export const stopDrag = () => (
+  { type: 'STOP_DRAG', _ignore: true }
 )
 
-export default startDragging = () => (
-  { type: 'STOP_DRAG' }
+export const startDrag = () => (
+  { type: 'START_DRAG', _ignore: true }
 )

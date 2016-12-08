@@ -21,6 +21,13 @@ class Superstream {
       ))
   }
 
+  _createTimelineStatestream(reducer, actionStream) {
+    return actionStream(this)
+      .merge(this.stream.filter(value => value ? value._clearState : false))
+      .startWith(reducer(undefined, { type: null }))
+      .scan(reducer)
+  }
+
   // Creates a collection of all state-streams
   createStore(streamCollection) {
     this.store = streamCollection;
@@ -41,7 +48,9 @@ class Superstream {
   // Dispatch an observable to the superstream
   dispatchObservableFn(streamFunction) {
     const sideEffectStream = streamFunction(this.stream.filter(action => action).skip(1));
-    this.stream = this.stream.merge(sideEffectStream);
+    sideEffectStream.subscribe((action) => {
+      this.dispatch(action);
+    })
   }
 
   // Store a reference to every action type that passes through the stream.
@@ -54,7 +63,6 @@ class Superstream {
   filterForActionTypes(...actionTypes) {
     const actions = Array.isArray(actionTypes[0]) ? actionTypes[0] : actionTypes;
     const hash = actions.reduce((acc, curr) => Object.assign(acc, { [curr]: true }), {});
-    console.log(hash);
     return this.stream.filter(action => {
       return action ? (hash[action.type]) : false
     })
@@ -64,13 +72,12 @@ class Superstream {
   getHistory() {
     const history$ = this.stream.filter(action => action && !action._ignore)
       .scan((acc, cur) => {
-        console.log('current action', cur);
         acc.push(cur);
         return acc;
       }, [])
       .publish()
-    this.history$.connect();
-    this.history$.subscribe(el => this.history = el)
+    history$.connect();
+    history$.subscribe(el => this.history = el)
     return history$
   }
 

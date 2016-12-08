@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import reactiveComponent from './reactiveComponent.js';
 import Rx from 'rxjs/Rx';
 
 const STYLES = {
@@ -12,7 +13,7 @@ const STYLES = {
 
 const Slider = (props) => {
   const {dragging, barPosition} = props;
-  const zIndex = isDragging ? -1 : 1;
+  const zIndex = dragging ? -1 : 1;
   const updatedStyles = Object.assign({}, STYLES, {
     left: barPosition,
     zIndex: zIndex

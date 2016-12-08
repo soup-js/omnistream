@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import reactiveComponent from './reactiveComponent.js';
 import Rx from 'rxjs/Rx';
 
 const TimelineUnit = (props) => {
@@ -7,7 +8,7 @@ const TimelineUnit = (props) => {
   const handleMouseEnter = () => {
     dragging ? timeTravel(index) : void 0;
   }
-  
+
   return (
     <div className='timeline-unit' style={styles}
       onMouseEnter={handleMouseEnter}

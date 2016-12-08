@@ -3,8 +3,9 @@ import Rx from 'rxjs/Rx';
 import Slider from './Slider';
 import TimelineUnit from './TimelineUnit';
 import createSuperstream from './superstream.js';
-import { dragMovement$, currentlyDragging$ } from './actionStreams.js';
-import reducer from './reducer.js';
+import reactiveComponent from './reactiveComponent.js';
+import { dragMovement, currentlyDragging } from './actionStreams.js';
+import { dragReducer, barPositionReducer } from './reducer.js';
 
 const STYLES = {
   position: 'fixed',
@@ -34,19 +35,18 @@ const CONTAINER_STYLE = {
   fontSize: '.75em'
 }
 
-
 // setup OMNISTREAMS
 const addTimelinestore = (superstream) => {
-  const sliderState$ = superstream.createStatestream(dragMovement$);
-  const draggingState$ = superstream.createStatestream(currentlyDragging$);
+  const sliderState$ = superstream._createTimelineStatestream(barPositionReducer, dragMovement);
+  const draggingState$ = superstream._createTimelineStatestream(dragReducer, currentlyDragging);
   superstream.addToStore({ sliderState$, draggingState$ });
 }
 
 
 class Timeline extends Component {
-  constructor(props, context) {
-    super();
-    this.superstream = context.superstream;
+  constructor(props) {
+    super(props);
+    this.superstream = this.props.superstream;
     addTimelinestore(this.superstream);
     this.state = { history: [] };
     this.history$ = this.superstream.history$;
@@ -54,7 +54,7 @@ class Timeline extends Component {
   }
 
   componentDidMount() {
-    this.historyStream.subscribe((historyArray) => {
+    this.history$.subscribe((historyArray) => {
       this.setState({ history: historyArray });
     })
   }

@@ -15,13 +15,13 @@ const combineStreamsToState = (stateStreams) => {
 export default function (componentDefinition, ...stateStreamNames) {
   class ReactiveComponent extends Component {
     constructor(props, context) {
-      super();
+      super(props, context);
       this.state = { childProps: {} }
-      this.superstream = context.superstream;
+      this.superstream = this.context.superstream;
 
       // Make the dispatch function accessible to be passed as a prop to child components.
       this.dispatch = this.superstream.dispatch.bind(context.superstream);
-      this.dispatchSideEffect = this.superstream.dispatchSideEffect.bind(context.superstream);
+      this.dispatchObservableFn = this.superstream.dispatchObservableFn.bind(context.superstream);
     }
 
     componentDidMount() {
@@ -31,7 +31,7 @@ export default function (componentDefinition, ...stateStreamNames) {
       // Subscribes to the props stream. This will trigger a re-render whenever a new action has been dispatched to 
       // any filtered stream passed down as props to a component.
       this.subscription = state$.subscribe((props) => {
-        this.setState({ childProps: props });
+        this.setState({ childProps: Object.assign({}, this.state.childProps) });
       });
     }
 
@@ -41,10 +41,11 @@ export default function (componentDefinition, ...stateStreamNames) {
 
     render() {
       return React.createElement(componentDefinition,
-        Object.assign(this.state.childProps, {
+        Object.assign({}, this.state.childProps, {
           dispatch: this.dispatch,
-          dispatchSideEffect: this.dispatchSideEffect
-        }), null);
+          dispatchObservableFn: this.dispatchObservableFn,
+          superstream: this.superstream
+        }, this.props), null);
     }
   }
   ReactiveComponent.contextTypes = { superstream: React.PropTypes.object.isRequired }
