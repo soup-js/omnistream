@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import Rx from 'rxjs/Rx';
 import Slider from './Slider';
 import TimelineUnit from './TimelineUnit';
+import createSuperstream from './superstream.js';
+import reactiveComponent from './reactiveComponent.js';
+import { dragMovement, currentlyDragging } from './actionStreams.js';
+import { dragReducer, barPositionReducer } from './reducer.js';
 
 const STYLES = {
   position: 'fixed',
@@ -31,39 +35,43 @@ const CONTAINER_STYLE = {
   fontSize: '.75em'
 }
 
+// setup OMNISTREAMS
+const addTimelinestore = (superstream) => {
+  const sliderState$ = superstream._createTimelineStatestream(barPositionReducer, dragMovement);
+  const draggingState$ = superstream._createTimelineStatestream(dragReducer, currentlyDragging);
+  superstream.addToStore({ sliderState$, draggingState$ });
+}
+
+
 class Timeline extends Component {
   constructor(props) {
-    super();
-    this.historyStream = props.superstream.historyStream;
-    this.state = { history: [], dragging: false }
-    this.timeTravelToPointN = props.superstream.timeTravelToPointN.bind(props.superstream);
-    this.setDraggingState = this.setDraggingState.bind(this);
-  }
-
-  setDraggingState(result) {
-    this.setState(result);
+    super(props);
+    this.superstream = this.props.superstream;
+    addTimelinestore(this.superstream);
+    this.state = { history: [] };
+    this.history$ = this.superstream.history$;
+    this.timeTravelToPointN = this.superstream.timeTravelToPointN.bind(this.superstream);
   }
 
   componentDidMount() {
-    this.historyStream.subscribe((historyArray) => {
+    this.history$.subscribe((historyArray) => {
       this.setState({ history: historyArray });
     })
   }
 
   render() {
+    const units = this.state.history.map((node, index) => {
+      return <TimelineUnit key={index} styles={UNIT_STYLES} index={index} timeTravel={this.timeTravelToPointN} />
+    })
     return (
       <div id='timeline' style={STYLES}>
-        <Slider handleDrag={this.setDraggingState} isDragging={this.state.dragging} />
+        <Slider />
         <div id='units' style={CONTAINER_STYLE}>
-          {this.state.history.map((node, index) => {
-            return <TimelineUnit key={index} styles={UNIT_STYLES} index={index} on={this.state.dragging} timeTravel={this.timeTravelToPointN} />
-          })
-          }
+          {units}
         </div>
       </div>
     )
   }
 }
 
-
-export default Timeline;
+export default reactiveComponent(Timeline);

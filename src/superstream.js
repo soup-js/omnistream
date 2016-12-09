@@ -4,24 +4,49 @@ class Superstream {
   // Instatiates a new stream to manage state for the application
   constructor() {
     this.stream = new Rx.BehaviorSubject();
-  // Creates an array to hold all actions dispatched within an application. 
-  // This feature allows for time travel debugging in O(n) space.
+    // Creates an array to hold all actions dispatched within an application. 
+    // This feature allows for time travel debugging in O(n) space.
     this.history = [];
-    this.setOfAllActionTypes = {};
-    this.getHistory();
-    this.recordActionTypes();
+    this.history$ = this.getHistory();
+    this.store = { 'omniHistory$': this.history$ };
+  }
+
+  // Creates a state-stream with provided reducer and action stream
+  createStatestream(reducer, actionStream) {
+    return actionStream(this)
+      .merge(this.stream.filter(value => value ? value._clearState : false))
+      .startWith(reducer(undefined, { type: null }))
+      .scan((acc, curr) => (
+        curr._clearState ? reducer(undefined, { type: null }) : reducer(acc, curr)
+      ))
+  }
+
+  _createTimelineStatestream(reducer, actionStream) {
+    return actionStream(this)
+      .merge(this.stream.filter(value => value ? value._clearState : false))
+      .startWith(reducer(undefined, { type: null }))
+      .scan(reducer)
+  }
+
+  // Creates a collection of all state-streams
+  createStore(streamCollection) {
+    this.store = streamCollection;
+  }
+
+  addToStore(streamCollection) {
+    this.store = Object.assign({}, this.store, streamCollection);
   }
 
   // Check whether each action dispatched has data and type properties. 
   // If so, pass the action to the superstream.
-  dispatch(data) {
-    if (!(data.hasOwnProperty('data') && data.hasOwnProperty('type'))) {
-      throw new Error('Actions dispatched to superstream must be objects with data and type properties')
+  dispatch(action) {
+    if (!(action.hasOwnProperty('type') && !(action._clearState))) {
+      throw new Error('Actions dispatched to superstream must be objects with type properties')
     }
-    this.stream.next(data);
+    this.stream.next(action);
   }
   // Dispatch an observable to the superstream
-  dispatchSideEffect(streamFunction) {
+  dispatchObservableFn(streamFunction) {
     const sideEffectStream = streamFunction(this.stream.filter(action => action).skip(1));
     sideEffectStream.subscribe((action) => {
       this.dispatch(action);
@@ -29,43 +54,42 @@ class Superstream {
   }
 
   // Store a reference to every action type that passes through the stream.
-   recordActionTypes() {
+  recordActionTypes() {
     this.actionStream = this.stream.filter(action => action).map(action => action.type)
     this.actionStream.subscribe(type => this.setOfAllActionTypes[type] = true);
   }
 
   // Create an observable of data for a specific action type.
-  filterForAction(actionType) {
+  filterForActionTypes(...actionTypes) {
+    const actions = Array.isArray(actionTypes[0]) ? actionTypes[0] : actionTypes;
+    const hash = actions.reduce((acc, curr) => Object.assign(acc, { [curr]: true }), {});
     return this.stream.filter(action => {
-      return action ? (action.type === actionType) : action
+      return action ? (hash[action.type]) : false
     })
-      .map(action => action ? action.data : action)
   }
 
   // Create an observable that updates history when a new action is received.
   getHistory() {
-    this.historyStream = this.stream.filter(action => action && !action.ignore)
+    const history$ = this.stream.filter(action => action && !action._ignore)
       .scan((acc, cur) => {
         acc.push(cur);
         return acc;
       }, [])
-     .publish()
-    this.historyStream.connect();
-    this.historyStream.subscribe(el => this.history = el)
+      .publish()
+    history$.connect();
+    history$.subscribe(el => this.history = el)
+    return history$
   }
 
   // Revert the app back to its original state
   clearState() {
-    Object.keys(this.setOfAllActionTypes).forEach(event => {
-      let action = { data: null, type: event, ignore: true }
-      this.dispatch(action);
-    });
+    this.stream.next({ _clearState: true, _ignore: true });
   }
 
-  timeTravelToPointN(n){
+  timeTravelToPointN(n) {
     this.clearState();
     for (let i = 0; i <= n; i++) {
-      this.dispatch(Object.assign({ignore: true}, this.history[i]));
+      this.dispatch(Object.assign({ _ignore: true }, this.history[i]));
     }
   }
 }
