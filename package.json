@@ -1,5 +1,5 @@
 {
-  "name": "soup-js",
+  "name": "omnistream",
   "version": "0.0.5",
   "description": "Stream based state management for React built on RxJs",
   "main": "./dist/",
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/soup-js/soup-js.git"
+    "url": "git+https://github.com/soup-js/omnistream.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/soup-js/soup-js/issues"
+    "url": "https://github.com/soup-js/omnistream/issues"
   },
-  "homepage": "https://github.com/soup-js/soup-js#readme",
+  "homepage": "https://github.com/soup-js/omnistream#readme",
   "dependencies": {
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
