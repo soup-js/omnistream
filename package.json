@@ -4,7 +4,7 @@
   "description": "Stream based state management for React built on RxJs",
   "main": "./dist/",
   "scripts": {
-    "test": "babel-tape-runner test/**/*.js | tap-spec",
+    "test": "ava",
     "build": "babel src --out-dir dist",
     "build:pack": "babel src --out-dir dist && npm pack"
   },
@@ -24,6 +24,7 @@
     "rxjs": "^5.0.0-rc.4"
   },
   "devDependencies": {
+    "ava": "^0.17.0",
     "babel-core": "^6.18.2",
     "babel-loader": "^6.2.8",
     "babel-preset-es2015": "^6.18.0",
@@ -31,7 +32,17 @@
     "babel-tape-runner": "^2.0.1",
     "mocha": "^3.2.0",
     "tap-spec": "^4.1.1",
+    "tape": "^4.6.3",
     "webpack": "^1.13.3",
     "webpack-dev-server": "^1.16.2"
-  }
+  },
+   "ava": {
+         "babel": {
+             "presets": [
+                    "es2015"
+             ]
+         },
+         "tap": true, 
+         "require": ["babel-register"]
+    }
 }

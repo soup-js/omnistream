@@ -1,6 +1,6 @@
 const Rx = require('rxjs/Rx');
 
-class Superstream {
+class Omnistream {
   // Instatiates a new stream to manage state for the application
   constructor() {
     this.stream = new Rx.BehaviorSubject();
@@ -94,6 +94,6 @@ class Superstream {
   }
 }
 
-export default function createSuperstream() {
-  return new Superstream();
+export default function createOmnistream() {
+  return new Omnistream();
 }
