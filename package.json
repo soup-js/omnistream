@@ -42,7 +42,6 @@
                     "es2015"
              ]
          },
-         "tap": true, 
          "require": ["babel-register"]
     }
 }

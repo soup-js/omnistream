@@ -6,7 +6,7 @@ import Rx from 'rxjs/Rx';
 const TimelineUnit = (props) => {
   const {dragging, index, timeTravel, styles} = props;
   const handleMouseEnter = () => {
-    dragging ? timeTravel(index) : void 0;
+    dragging ? timeTravel(index) : undefined;
   }
 
   return (
