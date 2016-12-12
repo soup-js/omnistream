@@ -3,12 +3,10 @@ export const drag = (coordinate) => (
 )
 
 export const stopDrag = () => {
-  console.log('stop drag called');
   return { type: 'STOP_DRAG', _ignore: true }
 }
 
 export const startDrag = () => {
-  console.log('startDrag called');
   return { type: 'START_DRAG', _ignore: true }
 }
 

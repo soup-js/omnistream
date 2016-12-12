@@ -3,7 +3,7 @@ import Rx from 'rxjs/Rx';
 import Slider from './Slider';
 import TimelineUnit from './TimelineUnit';
 import createSuperstream from './superstream.js';
-import reactiveComponent from './reactiveComponent.js';
+import { reactiveTimeline } from './reactiveComponent.js';
 import { dragMovement, currentlyDragging } from './actionStreams.js';
 import { dragReducer, barPositionReducer } from './reducer.js';
 import { stopDrag, mouseLeave } from './actions';
@@ -74,7 +74,6 @@ class Timeline extends Component {
   }
 
   render() {
-    console.log('timeline receiving props', this.props);
     const units = this.state.history.map((node, index) => {
       return <TimelineUnit key={index} styles={UNIT_STYLES} index={index} timeTravel={this.timeTravelToPointN} />
     })
@@ -89,4 +88,4 @@ class Timeline extends Component {
   }
 }
 
-export default reactiveComponent(Timeline);
+export default reactiveTimeline(Timeline);

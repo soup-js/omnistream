@@ -9,7 +9,6 @@ function dragReducer(state = { dragging: false }, action) {
 }
 
 function barPositionReducer(state = { barPosition: 10 }, action) {
-  // console.log('reducer received', action);
   switch (action.type) {
     case 'BAR_MOVE':
       return Object.assign({}, state, { barPosition: action.barPosition })

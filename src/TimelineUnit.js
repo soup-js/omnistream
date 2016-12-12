@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import reactiveComponent from './reactiveComponent.js';
+import { reactiveComponent } from './reactiveComponent.js';
 import Rx from 'rxjs/Rx';
 
 const TimelineUnit = (props) => {
-  console.log('unit received props', props);
   const {dragging, index, timeTravel, styles} = props;
   const handleMouseEnter = () => {
     dragging ? timeTravel(index) : undefined;

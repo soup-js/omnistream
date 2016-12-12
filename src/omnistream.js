@@ -62,7 +62,6 @@ class Omnistream {
   // Create an observable of data for a specific action type.
   filterForActionTypes(...actionTypes) {
     const actions = Array.isArray(actionTypes[0]) ? actionTypes[0] : actionTypes;
-    console.log(actions);
     const hash = actions.reduce((acc, curr) => Object.assign(acc, { [curr]: true }), {});
     return this.stream.filter(action => {
       return action ? (hash[action.type]) : false
