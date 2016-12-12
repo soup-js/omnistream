@@ -6,6 +6,7 @@ import createSuperstream from './superstream.js';
 import reactiveComponent from './reactiveComponent.js';
 import { dragMovement, currentlyDragging } from './actionStreams.js';
 import { dragReducer, barPositionReducer } from './reducer.js';
+import { stopDrag, mouseLeave } from './actions';
 
 const STYLES = {
   position: 'fixed',
@@ -35,10 +36,15 @@ const CONTAINER_STYLE = {
   fontSize: '.75em'
 }
 
+
+const draggingStateFn = (superstream) => {
+  return superstream.filterForActionTypes(['START_DRAG', 'STOP_DRAG'])
+}
+
 // setup OMNISTREAMS
 const addTimelinestore = (superstream) => {
   const sliderState$ = superstream._createTimelineStatestream(barPositionReducer, dragMovement);
-  const draggingState$ = superstream._createTimelineStatestream(dragReducer, currentlyDragging);
+  const draggingState$ = superstream._createTimelineStatestream(dragReducer, draggingStateFn);
   superstream.addToStore({ sliderState$, draggingState$ });
 }
 
@@ -57,6 +63,17 @@ class Timeline extends Component {
     this.history$.subscribe((historyArray) => {
       this.setState({ history: historyArray });
     })
+    this.props.dispatchObservableFn(currentlyDragging);
+    document.getElementById('timeline').addEventListener('mouseleave', (x) => {
+      this.props.dispatch(mouseLeave());
+      console.log('mouseleft')
+    });
+  //   const mouseLeave = Rx.Observable.fromEvent(document.getElementById('timeline'), 'mouseleave')
+  //     .map(event => {
+  //       console.log('mouseleave');
+  //       this.props.dispatch(stopDrag());
+  //     });
+  // }
   }
 
   render() {
