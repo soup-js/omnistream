@@ -4,9 +4,9 @@ import reactiveComponent from './reactiveComponent.js';
 import Rx from 'rxjs/Rx';
 
 const TimelineUnit = (props) => {
+  console.log('unit received props', props);
   const {dragging, index, timeTravel, styles} = props;
   const handleMouseEnter = () => {
-    console.log('mouse entered, dragging is ', dragging);
     dragging ? timeTravel(index) : undefined;
   }
 

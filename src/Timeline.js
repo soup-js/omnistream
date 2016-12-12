@@ -64,19 +64,17 @@ class Timeline extends Component {
       this.setState({ history: historyArray });
     })
     this.props.dispatchObservableFn(currentlyDragging);
-    document.getElementById('timeline').addEventListener('mouseleave', (x) => {
+    this.listener = document.getElementById('timeline').addEventListener('mouseleave', (x) => {
       this.props.dispatch(mouseLeave());
-      console.log('mouseleft')
     });
-  //   const mouseLeave = Rx.Observable.fromEvent(document.getElementById('timeline'), 'mouseleave')
-  //     .map(event => {
-  //       console.log('mouseleave');
-  //       this.props.dispatch(stopDrag());
-  //     });
-  // }
+  }
+
+  compomentWillUnmount() {
+    document.getElementById('timeline').removeEventListener(this.listener);
   }
 
   render() {
+    console.log('timeline receiving props', this.props);
     const units = this.state.history.map((node, index) => {
       return <TimelineUnit key={index} styles={UNIT_STYLES} index={index} timeTravel={this.timeTravelToPointN} />
     })

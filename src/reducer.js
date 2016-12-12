@@ -1,5 +1,4 @@
 function dragReducer(state = { dragging: false }, action) {
-  console.log('received action', action);
   switch (action.type) {
     case 'STOP_DRAG':
       return Object.assign({}, state, { dragging: false })

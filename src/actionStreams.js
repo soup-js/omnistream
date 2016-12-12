@@ -14,7 +14,7 @@ const currentlyDragging = (superstream) => superstream.filter(x => x.type === 'M
     if (val === 'slider') return !dragging;
     if (val === 'nonslider' || val === 'stop') return false;
   }, false)
-  .map(dragging => (console.log('dragging', dragging), dragging ? startDrag() : stopDrag()))
+  .map(dragging => dragging ? startDrag() : stopDrag())
 
 const dragMovement = (superstream) => {
   return superstream.filterForActionTypes('STOP_DRAG', 'START_DRAG')

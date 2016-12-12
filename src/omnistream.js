@@ -13,7 +13,6 @@ class Omnistream {
 
   // Creates a state-stream with provided reducer and action stream
   createStatestream(reducer, actionStream) {
-    console.log('actionSTream', actionStream);
     return actionStream(this)
       .merge(this.stream.filter(value => value ? value._clearState : false))
       .startWith(reducer(undefined, { type: null }))
