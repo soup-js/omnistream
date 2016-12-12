@@ -61,19 +61,23 @@ test('get history returns a subject', (t) => {
 })
 
 test('subscription to history$ returns current copy of history array', (t) => {
-  t.plan(2);
+  t.plan(1);
   const omnistream = createOmnistream();
   const history$ = omnistream.getHistory();
   omnistream.dispatch({ type: 'A' })
-  const sub0 = history$.take(1).subscribe((history) => {
+  omnistream.dispatch({ type: 'B' })
+  const sub0 = history$.subscribe((history) => {
+    console.log('===', history);
     return t.deepEqual([{ type: 'A' }], history);
   });
-  omnistream.dispatch({ type: 'C' })
   omnistream.dispatch({ type: 'B' })
   // omnistream.dispatch({ type: 'C' })
-  const sub1 = history$.subscribe((history) => {
-    return t.deepEqual([{ type: 'A' }, {type: 'B'}, {type: 'C'}], history);
-  })
+  
+  // // omnistream.dispatch({ type: 'C' })
+  // const sub1 = history$.take(1).subscribe((history) => {
+  //   console.log('---', history);
+  //   return t.deepEqual([{ type: 'A' }, {type: 'B'}, {type: 'C'}], history);
+  // })
 })
 
 

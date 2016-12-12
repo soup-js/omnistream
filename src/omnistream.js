@@ -71,15 +71,17 @@ class Omnistream {
 
   // Create an observable that updates history when a new action is received.
   getHistory() {
-    const history$ = this.stream.filter(action => action && !action._ignore)
-      .scan((acc, cur) => {
-        acc.push(cur);
-        return acc;
-      }, [])
-      .publish()
+    const history$ = new Rx.BehaviorSubject();
+    history$ = history$.merge(
+    this.stream.filter(action => action && !action._ignore)
+      .scan((acc, curr) => acc.concat([curr]), [])).publish()
+    // history$.subscribe(el => {
+    //   this.history = el
+    //   console.log('el', el)
+    //   console.log('current history', this.history)
+    // })
     history$.connect();
-    history$.subscribe(el => this.history = el)
-    return history$
+    return history$;
   }
 
   // Revert the app back to its original state
