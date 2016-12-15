@@ -7,7 +7,7 @@ const STYLE = {
     'border': '1px solid rgb(235, 235, 235)',
     'padding': '5px',
     'bottom': '80',
-    'position': 'absolute',
+    'position': 'relative',
     'minHeight': '20px',
     'maxWidth': '900px',
     'fontSize': '1.15em',
@@ -18,7 +18,7 @@ function ActionViewer(props) {
   const {action} = props;
   return (
     <div className='timeline-action' style={STYLE}>
-      {JSON.stringify(action)}
+      <span>{JSON.stringify(action)}</span>
     </div>
   )
 }

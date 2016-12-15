@@ -13,6 +13,7 @@ const STYLES = {
   position: 'fixed',
   backgroundColor: '#f4f4f4',
   overflowX: 'scroll',
+  overflowY: 'hidden',
   whiteSpace: 'nowrap',
   width: '100%',
   height: '70px',
@@ -27,7 +28,6 @@ const MAIN_CONTAINER_STYLES = {
   justifyContent: 'center',
   width: '100%',
   bottom: '0',
-  height: '115px'
 }
 
 const UNIT_STYLES = {
