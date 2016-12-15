@@ -7,7 +7,6 @@ import { updateView } from './actions.js';
 const TimelineUnit = (props) => {
   const {dragging, index, timeTravel, styles, updateViewe, dispatch, node} = props;
   const handleMouseEnter = () => {
-    console.log('mouse entered');
     dispatch(updateView(node));
     dragging ? timeTravel(index) : undefined;
   }
