@@ -1,6 +1,6 @@
 {
   "name": "omnistream",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Stream based state management for React built on RxJs",
   "main": "./dist/",
   "scripts": {

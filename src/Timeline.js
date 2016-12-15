@@ -44,7 +44,9 @@ const UNIT_STYLES = {
 
 const CONTAINER_STYLE = {
   fontWeight: '200',
-  fontSize: '.75em'
+  fontSize: '.75em',
+  position: 'relative',
+  bottom: '40px',
 }
 
 

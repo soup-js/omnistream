@@ -17,7 +17,7 @@ class Omnistream {
       .merge(this.stream.filter(value => value ? value._clearState : false))
       .startWith(reducer(undefined, { type: null }))
       .scan((acc, curr) => (
-        curr._clearState ? reducer(undefined,  { type: null }) : reducer(acc, curr)
+        curr._clearState ? reducer(undefined, { type: null }) : reducer(acc, curr)
       ))
   }
 
@@ -89,7 +89,9 @@ class Omnistream {
   timeTravelToPointN(n) {
     this.clearState();
     for (let i = 0; i <= n; i++) {
-      this.dispatch(Object.assign({ _ignore: true }, this.history[i]));
+      if (!(this.history[i].sideEffect)) {
+        this.dispatch(Object.assign({ _ignore: true }, this.history[i]));
+      }
     }
   }
 }

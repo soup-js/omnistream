@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import { reactiveComponent } from './reactiveComponent.js';
 
 const STYLE = {
-    'maxHeight': '25px',
     'wordWrap': 'break-word',
     'border': '1px solid rgb(235, 235, 235)',
     'padding': '5px',
