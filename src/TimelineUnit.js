@@ -2,10 +2,13 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { reactiveComponent } from './reactiveComponent.js';
 import Rx from 'rxjs/Rx';
+import { updateView } from './actions.js';
 
 const TimelineUnit = (props) => {
-  const {dragging, index, timeTravel, styles} = props;
+  const {dragging, index, timeTravel, styles, updateViewe, dispatch, node} = props;
   const handleMouseEnter = () => {
+    console.log('mouse entered');
+    dispatch(updateView(node));
     dragging ? timeTravel(index) : undefined;
   }
 

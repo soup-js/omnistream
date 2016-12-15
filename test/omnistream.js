@@ -67,7 +67,6 @@ test('subscription to history$ returns current copy of history array', (t) => {
   omnistream.dispatch({ type: 'A' })
   omnistream.dispatch({ type: 'B' })
   const sub0 = history$.subscribe((history) => {
-    console.log('===', history);
     return t.deepEqual([{ type: 'A' }], history);
   });
   omnistream.dispatch({ type: 'B' })

@@ -14,3 +14,8 @@ export const mouseLeave = () => (
   { type: 'MOUSE_LEAVE', _ignore: true }
 )
 
+export const updateView = (action) => {
+  return { type: 'SELECT_ACTION', _ignore: true, action }
+}
+
+

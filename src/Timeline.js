@@ -3,6 +3,7 @@ import Rx from 'rxjs/Rx';
 import Slider from './Slider';
 import TimelineUnit from './TimelineUnit';
 import createSuperstream from './superstream.js';
+import ActionViewer from './ActionViewer.js';
 import { reactiveTimeline } from './reactiveComponent.js';
 import { dragMovement, currentlyDragging } from './actionStreams.js';
 import { dragReducer, barPositionReducer } from './reducer.js';
@@ -17,6 +18,16 @@ const STYLES = {
   height: '70px',
   bottom: '0px',
   borderTop: '1px solid #b0b0b0'
+}
+
+const MAIN_CONTAINER_STYLES = {
+  fontFamily: 'monospace',
+  position: 'fixed',
+  display: 'flex',
+  justifyContent: 'center',
+  width: '100%',
+  bottom: '0',
+  height: '115px'
 }
 
 const UNIT_STYLES = {
@@ -38,7 +49,7 @@ const CONTAINER_STYLE = {
 
 
 const draggingStateFn = (superstream) => {
-  return superstream.filterForActionTypes(['START_DRAG', 'STOP_DRAG'])
+  return superstream.filterForActionTypes(['START_DRAG', 'STOP_DRAG', 'SELECT_ACTION'])
 }
 
 // setup OMNISTREAMS
@@ -75,14 +86,17 @@ class Timeline extends Component {
 
   render() {
     const units = this.state.history.map((node, index) => {
-      return <TimelineUnit key={index} styles={UNIT_STYLES} index={index} timeTravel={this.timeTravelToPointN} />
+      return <TimelineUnit key={index} styles={UNIT_STYLES} index={index} node={node} timeTravel={this.timeTravelToPointN} />
     })
     return (
+      <div id='timeline-container' style={MAIN_CONTAINER_STYLES}>
+      <ActionViewer history={this.state.history}/>
       <div id='timeline' style={STYLES}>
         <Slider />
         <div id='units' style={CONTAINER_STYLE}>
           {units}
         </div>
+      </div>
       </div>
     )
   }
