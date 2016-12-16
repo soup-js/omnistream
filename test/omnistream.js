@@ -60,23 +60,67 @@ test('get history returns a subject', (t) => {
   t.true(history$ instanceof Rx.Subject);
 })
 
-test('subscription to history$ returns current copy of history array', (t) => {
+test('subscription to history$ returns y', (t) => {
+  t.plan(2);
+  const omnistream = createOmnistream();
+  const history$ = omnistream.getHistory();
+  omnistream.dispatch({ type: 'A' })
+  t.deepEqual(omnistream.history, [{type: 'A'}])
+  omnistream.dispatch({ type: 'B' })
+  t.deepEqual(omnistream.history, [{type: 'A'}, {type: 'B'}])
+})
+
+test('history$ does not record actions with _ignore property', (t) => {
   t.plan(1);
   const omnistream = createOmnistream();
   const history$ = omnistream.getHistory();
   omnistream.dispatch({ type: 'A' })
-  omnistream.dispatch({ type: 'B' })
-  const sub0 = history$.subscribe((history) => {
-    return t.deepEqual([{ type: 'A' }], history);
-  });
-  omnistream.dispatch({ type: 'B' })
-  // omnistream.dispatch({ type: 'C' })
-  
-  // // omnistream.dispatch({ type: 'C' })
-  // const sub1 = history$.take(1).subscribe((history) => {
-  //   console.log('---', history);
-  //   return t.deepEqual([{ type: 'A' }, {type: 'B'}, {type: 'C'}], history);
-  // })
+  omnistream.dispatch({ type: 'B', _ignore: true })
+  t.deepEqual(omnistream.history, [{type: 'A'}])
 })
 
+test('filterForActionTypes only outputs actions according to the parameters passed in', (t) => {
+  t.plan(1);
+  const omnistream = createOmnistream();
+  const filteredStream$ = omnistream.filterForActionTypes('FIRST_ACTION');
+  filteredStream$.subscribe((el) =>{
+    t.deepEqual({ type: 'FIRST_ACTION' }, el)
+  })
+  omnistream.dispatch({ type: 'SECOND_ACTION' } )
+  omnistream.dispatch({ type: 'FIRST_ACTION' })
+})
+
+test('filterForActionTypes takes multiple inputs', (t) => {
+  t.plan(1);
+  const omnistream = createOmnistream();
+  const filteredStream$ = omnistream.filterForActionTypes('FIRST_ACTION', 'SECOND_ACTION');
+  const actions = [];
+  filteredStream$.subscribe(el => actions.push(el));
+  omnistream.dispatch({ type: 'SECOND_ACTION' } )
+  omnistream.dispatch({ type: 'FIRST_ACTION' })
+  omnistream.dispatch({ type: 'THIRD_ACTION' })
+  t.deepEqual(actions, [{ type: 'SECOND_ACTION' },{ type: 'FIRST_ACTION' }])
+})
+
+test('filterForActionTypes takes multiple inputs as an array', (t) => {
+  t.plan(1);
+  const omnistream = createOmnistream();
+  const filteredStream$ = omnistream.filterForActionTypes(['FIRST_ACTION', 'SECOND_ACTION']);
+  const actions = [];
+  filteredStream$.subscribe(el => actions.push(el));
+  omnistream.dispatch({ type: 'SECOND_ACTION' } )
+  omnistream.dispatch({ type: 'FIRST_ACTION' })
+  omnistream.dispatch({ type: 'THIRD_ACTION' })
+  t.deepEqual(actions, [{ type: 'SECOND_ACTION' },{ type: 'FIRST_ACTION' }])
+})
+
+test('dispatchObservableFn dispatches values from returned observable', (t) => {
+  t.plan(1);
+  const testObservable = () => Rx.Observable.of({type: 'ACTION'});
+  const omnistream = createOmnistream();
+  omnistream.stream.subscribe(element => { 
+    if (element) t.deepEqual(element, {type: 'ACTION'}) 
+  });
+  omnistream.dispatchObservableFn(testObservable);
+})
 
