@@ -42,15 +42,15 @@ class Omnistream {
   }
 
   // Check whether each action dispatched has data and type properties. 
-  // If so, pass the action to the superstream.
+  // If so, pass the action to the omnistream.
   dispatch(action) {
     if (!(action.hasOwnProperty('type') && !(action._clearState))) {
-      throw new Error('Actions dispatched to superstream must be objects with type properties')
+      throw new Error('Actions dispatched to omnistream must be objects with type properties')
     }
     if (this.timeTravelEnabled && action._ignore) this.stream.next(action);
     else if (!this.timeTravelEnabled) this.stream.next(action);
   }
-  // Dispatch an observable to the superstream
+  // Dispatch an observable to the omnistream
   dispatchObservableFn(streamFunction) {
     const sideEffectStream = streamFunction(this.stream.filter(action => action).skip(1));
     sideEffectStream.subscribe((action) => {
