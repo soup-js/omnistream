@@ -17,16 +17,16 @@ function makeReactive(componentDefinition, renderFn, ...stateStreamNames) {
     constructor(props, context) {
       super(props, context);
       this.state = { childProps: {} }
-      this.superstream = this.context.superstream;
+      this.omnistream = this.context.omnistream;
 
       // Make the dispatch function accessible to be passed as a prop to child components.
-      this.dispatch = this.superstream.dispatch.bind(context.superstream);
-      this.dispatchObservableFn = this.superstream.dispatchObservableFn.bind(context.superstream);
+      this.dispatch = this.omnistream.dispatch.bind(context.omnistream);
+      this.dispatchObservableFn = this.omnistream.dispatchObservableFn.bind(context.omnistream);
     }
 
     componentDidMount() {
       // Creates a new substream for each action type based on the provided "streamNames"
-      const stateStreams = stateStreamNames.map(name => this.superstream.store[name]);
+      const stateStreams = stateStreamNames.map(name => this.omnistream.store[name]);
       const state$ = combineStreamsToState(stateStreams);
       // Subscribes to the props stream. This will trigger a re-render whenever a new action has been dispatched to 
       // any filtered stream passed down as props to a component.
@@ -43,7 +43,7 @@ function makeReactive(componentDefinition, renderFn, ...stateStreamNames) {
       return renderFn.call(this, componentDefinition);
     }
   }
-  ReactiveComponent.contextTypes = { superstream: React.PropTypes.object.isRequired }
+  ReactiveComponent.contextTypes = { omnistream: React.PropTypes.object.isRequired }
   return ReactiveComponent;
 }
 
@@ -52,7 +52,7 @@ function renderTimeline(componentDefinition) {
     Object.assign({}, this.state.childProps, {
       dispatch: this.dispatch,
       dispatchObservableFn: this.dispatchObservableFn,
-      superstream: this.superstream
+      omnistream: this.omnistream
     }, this.props), null)
 }
 

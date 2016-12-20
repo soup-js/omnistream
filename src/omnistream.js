@@ -16,7 +16,7 @@ class Omnistream {
 
 
   // Creates a state-stream with provided reducer and action stream
-  createStatestream(reducer, actionStream) {
+  createStatestream(reducer, actionStream = this.stream) {
     return actionStream(this)
       .merge(this.stream.filter(value => value ? value._clearState : false))
       .startWith(reducer(undefined, { type: null }))
@@ -77,13 +77,13 @@ class Omnistream {
       .publish()
     history$.connect();
     history$.subscribe(el => this.history = el)
+
+    // ignore side effects during time travel
     const enableTimeTravel$ = this.stream
       .filter(action => action ? (action.type === 'START_DRAG' || action.type === 'STOP_DRAG') : false)
       .map(action => action.type)
     enableTimeTravel$.subscribe(val => {
-      console.log('val is', val);
       this.timeTravelEnabled = (val === 'START_DRAG') ? true : false
-      console.log('enabled', this.timeTravelEnabled);
     })
     return history$
   }

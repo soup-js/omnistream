@@ -6,7 +6,7 @@ const sliderClick$ = click$.filter((e) => e.target.id === 'sliderBar');
 const nonsliderClick$ = click$.filter((e) => (e.target.id !== 'sliderBar'));
 const mouseMove$ = Observable.fromEvent(document, 'mousemove');
 
-const currentlyDragging = (superstream) => superstream.filter(x => x.type === 'MOUSE_LEAVE')
+const currentlyDragging = (omnistream) => omnistream.filter(x => x.type === 'MOUSE_LEAVE')
   .map(x => 'stop')
   .merge(sliderClick$.map(x => 'slider'))
   .merge(nonsliderClick$.map(x => 'nonslider'))
@@ -16,8 +16,8 @@ const currentlyDragging = (superstream) => superstream.filter(x => x.type === 'M
   }, false)
   .map(dragging => dragging ? startDrag() : stopDrag())
 
-const dragMovement = (superstream) => {
-  return superstream.filterForActionTypes('STOP_DRAG', 'START_DRAG')
+const dragMovement = (omnistream) => {
+  return omnistream.filterForActionTypes('STOP_DRAG', 'START_DRAG')
     .switchMap((dragging) => {
       return dragging.type === 'STOP_DRAG' ? Observable.never() : mouseMove$
     })

@@ -1,11 +1,11 @@
-import createSuperstream from './omnistream.js';
+import createOmnistream from './omnistream.js';
 import StreamProvider from './StreamProvider.js';
 import {reactiveComponent} from './reactiveComponent.js';
 import Timeline from './Timeline.js';
 import createStatestream from './stateStream.js';
 
 module.exports = {
-  createSuperstream: createSuperstream,
+  createOmnistream: createOmnistream,
   createStatestream: createStatestream,
   StreamProvider: StreamProvider,
   reactiveComponent: reactiveComponent,
