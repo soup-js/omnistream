@@ -16,7 +16,8 @@ Omnistream is in early stages of development and all features are currently expe
 
 The central store is called the omnistream. After creating it and adding state streams, wrap your components in the provided StreamProvider component to give them access to it.
 
-``` 
+``` javascript
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { createOmnistream, StreamProvider } from 'Omnistream'
@@ -54,7 +55,7 @@ Once state streams have been created, they can be added to the omnistream's stor
 
 Creating an action stream and state stream:
 
-```
+```javascript
 const omnistream = omnistream.createOmnistream();
 const loginAction = (omnisteam) => omnistream.filterForActionTypes('USER_LOGIN'); // creates login action stream
 const loginState$ = omnistream.createStatestream(barPositionReducer, loginAction); //  creates login state stream
@@ -65,7 +66,7 @@ omnistream.createStore({ sliderState$, draggingState$ });
 
 To connect a component to the omnistream, wrap your component in a call to the provided `reactiveComponent` method, along with strings specifying the specific streams you'd like to susbcribe to.
 
-```
+```javascript
 function User(props) {
   // destructure the props received from stream subscriptions
   const {username, url} = props;
@@ -85,7 +86,7 @@ In the above example, the component will be subscribed to `loginState$`, and all
 
 Omnistream provides a `dispatch` method to all Reactive Components as part of their props. To dispatch an action, simply call dispatch with an object containing a `type` property.
 
-```
+```javascript
 function User(props) {
   const {username, url} = props;
   return (
@@ -108,7 +109,7 @@ Omnistream also provides `dispatchObservableFn` as a method to dispatch observab
 
 `dispatchObservableFn` takes one argument, which should be a function that returns an observable. The observable function you provide will be passed the omnistream's action stream as its first parameter.
 
-```
+```javascript
 const timeUntilLogin = (omnistream) => (
   const login = omnistream.filter(action => action.type === 'USER_LOGIN');
   return Rx.Observable.interval(100)
@@ -143,7 +144,7 @@ In this example, an observable is dispatched which will record the time up until
 
 Adding the timeline debugger is simply a mattter of including the provided `Timeline` component in your app, along with the omnistream as a prop. 
 
-``` 
+```javascript
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { createOmnistream, StreamProvider } from 'Omnistream'
