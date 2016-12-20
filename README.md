@@ -28,7 +28,7 @@ omnistream.createStore({ loginState$ });
 
 ReactDOM.render(
   // wrap components in StreamProvider to give them access to the omnistream
-  <StreamProvider omnistream={omnistream}> // pass the superstream instance to the StreamProvider
+  <StreamProvider omnistream={omnistream}> // pass the omnistream instance to the StreamProvider
     <App />
   </StreamProvider>,
   document.getElementById('root')

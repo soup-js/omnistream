@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Rx from 'rxjs/Rx';
 import Slider from './Slider';
 import TimelineUnit from './TimelineUnit';
-import createSuperstream from './superstream.js';
+import createOmnistream from './omnistream.js';
 import ActionViewer from './ActionViewer.js';
 import { reactiveTimeline } from './reactiveComponent.js';
 import { dragMovement, currentlyDragging } from './actionStreams.js';
