@@ -166,3 +166,5 @@ ReactDOM.render(
 ```
 
 When your app is rendered, it will now include a timeline with a visualization of every action in your app. Clicking on the slider will enable time travel, and dragging it to different actions will revert the app to that particular point. Side effects are ignored during time travel, so you don't need to worry about `componentDidMount` AJAX calls or similar events polluting the timeline.
+
+![timetravel](https://cloud.githubusercontent.com/assets/14319917/21365906/4f9f49bc-c6ac-11e6-915e-b076265523a9.gif)
