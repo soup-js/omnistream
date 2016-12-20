@@ -34,7 +34,7 @@ const UNIT_STYLES = {
   display: 'inline-block',
   zIndex: 0,
   height: '70px',
-  marginTop: '-70px',
+  marginTop: '-30px',
   borderLeft: '1px solid #909090',
   width: '24px',
   textAlign: 'center',
