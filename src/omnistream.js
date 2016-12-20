@@ -1,15 +1,19 @@
 const Rx = require('rxjs/Rx');
 
-class Superstream {
+class Omnistream {
   // Instatiates a new stream to manage state for the application
   constructor() {
     this.stream = new Rx.BehaviorSubject();
     // Creates an array to hold all actions dispatched within an application. 
     // This feature allows for time travel debugging in O(n) space.
     this.history = [];
+    this.timeTravelEnabled = false;
     this.history$ = this.getHistory();
     this.store = { 'omniHistory$': this.history$ };
   }
+
+// make it so actions are not dispatched if currently dragging timeline UNLESS they have an ignore property
+
 
   // Creates a state-stream with provided reducer and action stream
   createStatestream(reducer, actionStream) {
@@ -43,7 +47,8 @@ class Superstream {
     if (!(action.hasOwnProperty('type') && !(action._clearState))) {
       throw new Error('Actions dispatched to superstream must be objects with type properties')
     }
-    this.stream.next(action);
+    if (this.timeTravelEnabled && action._ignore) this.stream.next(action);
+    else if (!this.timeTravelEnabled) this.stream.next(action);
   }
   // Dispatch an observable to the superstream
   dispatchObservableFn(streamFunction) {
@@ -51,12 +56,6 @@ class Superstream {
     sideEffectStream.subscribe((action) => {
       this.dispatch(action);
     })
-  }
-
-  // Store a reference to every action type that passes through the stream.
-  recordActionTypes() {
-    this.actionStream = this.stream.filter(action => action).map(action => action.type)
-    this.actionStream.subscribe(type => this.setOfAllActionTypes[type] = true);
   }
 
   // Create an observable of data for a specific action type.
@@ -78,6 +77,14 @@ class Superstream {
       .publish()
     history$.connect();
     history$.subscribe(el => this.history = el)
+    const enableTimeTravel$ = this.stream
+      .filter(action => action ? (action.type === 'START_DRAG' || action.type === 'STOP_DRAG') : false)
+      .map(action => action.type)
+    enableTimeTravel$.subscribe(val => {
+      console.log('val is', val);
+      this.timeTravelEnabled = (val === 'START_DRAG') ? true : false
+      console.log('enabled', this.timeTravelEnabled);
+    })
     return history$
   }
 
@@ -89,11 +96,13 @@ class Superstream {
   timeTravelToPointN(n) {
     this.clearState();
     for (let i = 0; i <= n; i++) {
-      this.dispatch(Object.assign({ _ignore: true }, this.history[i]));
+      if (!(this.history[i].sideEffect)) {
+        this.dispatch(Object.assign({ _ignore: true }, this.history[i]));
+      }
     }
   }
 }
 
-export default function createSuperstream() {
-  return new Superstream();
+export default function createOmnistream() {
+  return new Omnistream();
 }

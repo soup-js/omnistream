@@ -1,19 +1,18 @@
-# Soup-js
-### Soup-js is a stream-based state management library for React built on RxJs observables.
+# Omnistream
+### Omnistream is a stream-based state management library for React built on RxJs observables.
 
-![soup_360](https://cloud.githubusercontent.com/assets/4997530/20856379/22034c3a-b8c2-11e6-8b3d-dc6daffb39b2.png)
 
-Soup-js has a simple API that allows React components to selectively subscribe to portions of a central store. This avoids unnecessary re-renders without the need of `componentShouldUpdate` or other workarounds. Upon connecting, your components will always stay up to date with the store and re-render as needed. With this model, it's possible to rely nearly exclusively on stateless functional React components, creating a more reactive application structure. Soup-js also features a built-in time-travelling debugger that operates without keeping any copies of the application state (since in soup-js, the store is a stream of actions).
+Omnistream has a simple API that allows React components to selectively subscribe to portions of a central store. This avoids unnecessary re-renders without the need of `componentShouldUpdate` or other workarounds. Upon connecting, your components will always stay up to date with the store and re-render as needed. With this model, it's possible to rely nearly exclusively on stateless functional React components, creating a more reactive application structure. Omnistream also features a built-in time-travelling debugger that operates without keeping any copies of the application state (since in Omnistream, the store is a stream of actions).
 
 ## Disclaimer
 Disclaimer
 
-Soup-js is in early stages of development and all features are currently experimental. We would appreciate hearing about any issues you encounter or feature requests.
+Omnistream is in early stages of development and all features are currently experimental. We would appreciate hearing about any issues you encounter or feature requests.
 
 ## Getting Started
 ----
 
-`npm install --save soup-js`
+`npm install --save omnistream`
 
 ### Create a central store 
 
@@ -22,7 +21,7 @@ The central store is called the superstream. After creating it, wrap your compon
 ``` 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { createSuperstream, StreamProvider } from 'soup-js'
+import { createSuperstream, StreamProvider } from 'omnistream'
 
 // create a central store, or "superstream", which will hold state
 const superstream = createSuperstream();
@@ -58,7 +57,7 @@ In the above example, the component will be subscribed to all actions with the t
 
 ### Dispatching actions
 
-Now that our component is connected, how do we dispatch actions to the superstream? Soup-js provides a `dispatch` method to all Reactive Components as part of their props. To dispatch an action, simply call dispatch with an object of the form `{ data: ..., type: STRING }`.
+Now that our component is connected, how do we dispatch actions to the superstream? Omnistream provides a `dispatch` method to all Reactive Components as part of their props. To dispatch an action, simply call dispatch with an object of the form `{ data: ..., type: STRING }`.
 
 ```
 function User(props) {
@@ -87,7 +86,7 @@ Adding the timeline debugger is simply a mattter of including the provided `Time
 ``` 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { createSuperstream, StreamProvider } from 'soup-js'
+import { createSuperstream, StreamProvider } from 'Omnistream'
 
 const superstream = createSuperstream();
 

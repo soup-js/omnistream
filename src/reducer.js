@@ -4,6 +4,8 @@ function dragReducer(state = { dragging: false }, action) {
       return Object.assign({}, state, { dragging: false })
     case 'START_DRAG':
       return Object.assign({}, state, { dragging: true })
+    case 'SELECT_ACTION':
+      return Object.assign({}, state, {action: action.action});
   }
   return state;
 }

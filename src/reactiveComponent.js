@@ -1,5 +1,5 @@
 const Rx = require('rxjs/Rx');
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 
 // mapStreamsToProps creates an observable stream for each action type given in "streamNames". 
 // This stream emits objects that will be passed down as props to the reactive components.
@@ -8,12 +8,12 @@ const combineStreamsToState = (stateStreams) => {
     return stateData.reduce((accum, curr) => {
       return Object.assign(accum, curr)
     }, {})
-  })
+  }).distinctUntilChanged(null, state => JSON.stringify(state));
 }
 
 //ReactiveComponent subscribes to a stream and re-renders when it receives new data.  
-export default function (componentDefinition, ...stateStreamNames) {
-  class ReactiveComponent extends Component {
+function makeReactive(componentDefinition, renderFn, ...stateStreamNames) {
+  class ReactiveComponent extends PureComponent {
     constructor(props, context) {
       super(props, context);
       this.state = { childProps: {} }
@@ -40,14 +40,32 @@ export default function (componentDefinition, ...stateStreamNames) {
     }
 
     render() {
-      return React.createElement(componentDefinition,
-        Object.assign({}, this.state.childProps, {
-          dispatch: this.dispatch,
-          dispatchObservableFn: this.dispatchObservableFn,
-          superstream: this.superstream
-        }, this.props), null);
+      return renderFn.call(this, componentDefinition);
     }
   }
   ReactiveComponent.contextTypes = { superstream: React.PropTypes.object.isRequired }
   return ReactiveComponent;
 }
+
+function renderTimeline(componentDefinition) {
+  return React.createElement(componentDefinition,
+    Object.assign({}, this.state.childProps, {
+      dispatch: this.dispatch,
+      dispatchObservableFn: this.dispatchObservableFn,
+      superstream: this.superstream
+    }, this.props), null)
+}
+
+function renderStandard(componentDefinition) {
+  return React.createElement(componentDefinition,
+    Object.assign({}, this.state.childProps, {
+      dispatch: this.dispatch,
+      dispatchObservableFn: this.dispatchObservableFn,
+    }, this.props), null)
+}
+
+export const reactiveComponent = (componentDefinition, ...stateStreamNames) =>
+  makeReactive(componentDefinition, renderStandard, ...stateStreamNames)
+
+export const reactiveTimeline = (componentDefinition, ...stateStreamNames) =>
+  makeReactive(componentDefinition, renderTimeline, ...stateStreamNames)

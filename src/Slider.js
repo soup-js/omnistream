@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import reactiveComponent from './reactiveComponent.js';
+import { reactiveComponent } from './reactiveComponent.js';
 import Rx from 'rxjs/Rx';
 
 const STYLES = {
