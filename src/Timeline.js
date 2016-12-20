@@ -34,7 +34,7 @@ const UNIT_STYLES = {
   display: 'inline-block',
   zIndex: 0,
   height: '70px',
-  marginTop: '-70px',
+  marginTop: '-30px',
   borderLeft: '1px solid #909090',
   width: '24px',
   textAlign: 'center',
@@ -50,26 +50,26 @@ const CONTAINER_STYLE = {
 }
 
 
-const draggingStateFn = (superstream) => {
-  return superstream.filterForActionTypes(['START_DRAG', 'STOP_DRAG', 'SELECT_ACTION'])
+const draggingStateFn = (omnistream) => {
+  return omnistream.filterForActionTypes(['START_DRAG', 'STOP_DRAG', 'SELECT_ACTION'])
 }
 
 // setup OMNISTREAMS
-const addTimelinestore = (superstream) => {
-  const sliderState$ = superstream._createTimelineStatestream(barPositionReducer, dragMovement);
-  const draggingState$ = superstream._createTimelineStatestream(dragReducer, draggingStateFn);
-  superstream.addToStore({ sliderState$, draggingState$ });
+const addTimelinestore = (omnistream) => {
+  const sliderState$ = omnistream._createTimelineStatestream(barPositionReducer, dragMovement);
+  const draggingState$ = omnistream._createTimelineStatestream(dragReducer, draggingStateFn);
+  omnistream.addToStore({ sliderState$, draggingState$ });
 }
 
 
 class Timeline extends Component {
   constructor(props) {
     super(props);
-    this.superstream = this.props.superstream;
-    addTimelinestore(this.superstream);
+    this.omnistream = this.props.omnistream;
+    addTimelinestore(this.omnistream);
     this.state = { history: [] };
-    this.history$ = this.superstream.history$;
-    this.timeTravelToPointN = this.superstream.timeTravelToPointN.bind(this.superstream);
+    this.history$ = this.omnistream.history$;
+    this.timeTravelToPointN = this.omnistream.timeTravelToPointN.bind(this.omnistream);
   }
 
   componentDidMount() {
