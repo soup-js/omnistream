@@ -59,7 +59,7 @@ Creating an action stream and state stream:
 const omnistream = omnistream.createOmnistream();
 const loginAction = (omnisteam) => omnistream.filterForActionTypes('USER_LOGIN'); // creates login action stream
 const loginState$ = omnistream.createStatestream(barPositionReducer, loginAction); //  creates login state stream
-omnistream.createStore({ sliderState$, draggingState$ });
+omnistream.createStore({ loginState$, ...otherStates$ });
 ```
 
 ### Connecting a component
