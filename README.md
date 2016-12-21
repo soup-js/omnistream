@@ -91,7 +91,7 @@ Omnistream provides a `dispatch` method to all Reactive Components as part of th
 
 ```javascript
 function User(props) {
-  const {username, url} = props;
+  const {username, url, dispatch} = props;
   return (
     <div>
       <input type=text onSubmit={(e) => dispatch({data: e.target.value, type: 'USER_NAME'})} />
@@ -123,7 +123,7 @@ const timeUntilLogin = (omnistream) => (
 
 class User extends Component() {
   componentDidMount() {
-    this.dispatchObservableFn(timeUntilLogin);
+    this.props.dispatchObservableFn(timeUntilLogin);
   }
 
   render() {
