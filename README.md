@@ -1,11 +1,13 @@
 # Omnistream
 ### Omnistream is a stream-based state management library for React built on RxJs observables.
 
-Omnistream has a simple API that allows React components to selectively subscribe to portions of a central store. This avoids unnecessary re-renders without the need of `componentShouldUpdate` or other workarounds. Upon connecting, your components will always stay up to date with the store and re-render as needed. With this model, it's possible to work exclusively with stateless functional components, creating a more reactive application structure. Omnistream also features a built-in time-travelling debugger that operates without keeping any copies of the application state (since in Omnistream, the store is a stream of actions).
+Omnistream has a simple API that allows React components to selectively subscribe to portions of a central store. This avoids unnecessary re-renders without the need of `componentShouldUpdate` or other workarounds. Upon connecting, your components will always stay up to date with the store and re-render as needed. With this model, it's possible to work exclusively with stateless functional components, creating a more reactive application structure. Omnistream also features a built-in time-travelling debugger that operates without keeping any copies of the application state (since in Omnistream, the store is a stream of actions). 
+
+In the spirit of [redux-observable](https://github.com/redux-observable/redux-observable), Omnistream is built around the idea of dispatching observables to your store. This allows you to compose some complicated async logic fairly easily.  
 
 ## Disclaimer
 
-Omnistream is in early stages of development and all features are currently experimental. We would appreciate hearing about any issues you encounter or feature requests.
+Omnistream is in early stages of development and all features are currently experimental. We would appreciate hearing about any issues you encounter or feature requests. Feel free to open issues or submit pull requests. 
 
 ## Getting Started
 ----
@@ -21,10 +23,11 @@ The central store is called the omnistream. After creating it and adding state s
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { createOmnistream, StreamProvider } from 'Omnistream'
-import {loginAction} from './actionStreams'; // import action stream creator
+import { loginAction } from './actionStreams'; // import action stream creator
+import { loginReducer } from './reducers';
 
 const omnistream = createOmnistream();
-const loginState$ = omnistream.createStatestream(loginAction); // create a state stream
+const loginState$ = omnistream.createStatestream(loginReducer, loginAction); // create a state stream
 omnistream.createStore({ loginState$ });
 
 ReactDOM.render(
@@ -58,13 +61,13 @@ Creating an action stream and state stream:
 ```javascript
 const omnistream = omnistream.createOmnistream();
 const loginAction = (omnisteam) => omnistream.filterForActionTypes('USER_LOGIN'); // creates login action stream
-const loginState$ = omnistream.createStatestream(barPositionReducer, loginAction); //  creates login state stream
+const loginState$ = omnistream.createStatestream(loginReducer, loginAction); //  creates login state stream
 omnistream.createStore({ loginState$, ...otherStates$ });
 ```
 
 ### Connecting a component
 
-To connect a component to the omnistream, wrap your component in a call to the provided `reactiveComponent` method, along with strings specifying the specific streams you'd like to susbcribe to.
+To connect a component to the omnistream, wrap your component in a call to the provided `reactiveComponent` method, along with strings specifying the specific streams you'd like to subscribe to.
 
 ```javascript
 function User(props) {
@@ -105,7 +108,7 @@ Here, an action of the form `{data: e.target.value, type: 'USER_NAME'}` is dispa
 
 ### Dispatching observables
 
-Omnistream also provides `dispatchObservableFn` as a method to dispatch observables instead of simple actions. The observables can then emit their own streams of actions, which will be folded into the omnistream in the correct order. This allows one to design complex asynchronous action sequences. Furthermore, every dispatched observable will have access to `omnistream`, so you can create observables that depend on events from separate parts of the app.
+Omnistream also provides `omnistream.dispatchObservableFn` as a method to dispatch observables instead of simple actions. The observables can then emit their own streams of actions, which will be folded into the omnistream in the correct order. This allows one to design complex asynchronous action sequences. Furthermore, every dispatched observable will have access to `omnistream`, so you can create observables that interact with actions dispatched from separate parts of the app.
 
 `dispatchObservableFn` takes one argument, which should be a function that returns an observable. The observable function you provide will be passed the omnistream's action stream as its first parameter.
 
@@ -142,7 +145,7 @@ In this example, an observable is dispatched which will record the time up until
 
 ### Adding the timeline 
 
-Adding the timeline debugger is simply a mattter of including the provided `Timeline` component in your app, along with the omnistream as a prop. 
+Adding the timeline debugger is simply a matter of including the provided `Timeline` component in your app, along with the omnistream as a prop. 
 
 ```javascript
 import React from 'react'
@@ -166,6 +169,8 @@ ReactDOM.render(
 );
 ```
 
-When your app is rendered, it will now include a timeline with a visualization of every action in your app. Clicking on the slider will enable time travel, and dragging it to different actions will revert the app to that particular point. Side effects are ignored during time travel, so you don't need to worry about `componentDidMount` AJAX calls or similar events polluting the timeline.
+When your app is rendered, it will now include a timeline with a visualization of every action in your app. Clicking on the slider will enable time travel, and dragging it to different actions will revert the app to that particular point. Side effects are ignored during time travel, so you don't need to worry about `componentDidMount` AJAX calls or similar events polluting the timeline. 
+
+Double clicking on any  action displayed in the timeline will revert the app to it's state upon receiving that action, and hovering over any action will display its actual javascript object representation.
 
 ![timetravel](https://cloud.githubusercontent.com/assets/14319917/21365906/4f9f49bc-c6ac-11e6-915e-b076265523a9.gif)
