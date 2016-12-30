@@ -1,7 +1,7 @@
 # Omnistream
 ### Omnistream is a stream-based state management library for React built on RxJs observables.
 
-Omnistream has a simple API that allows React components to selectively subscribe to portions of a central store. This avoids unnecessary re-renders without the need of `componentShouldUpdate` or other workarounds. Upon connecting, your components will always stay up to date with the store and re-render as needed. With this model, it's possible to work exclusively with stateless functional components, creating a more reactive application structure. Omnistream also features a built-in time-travelling debugger that operates without keeping any copies of the application state (since in Omnistream, the store is a stream of actions). 
+Omnistream has a simple API that allows React components to selectively subscribe to portions of a central store. This avoids unnecessary re-renders without the need of `shouldComponentUpdate` or other workarounds. Upon connecting, your components will always stay up to date with the store and re-render as needed. With this model, it's possible to work exclusively with stateless functional components, creating a more reactive application structure. Omnistream also features a built-in time-travelling debugger that operates without keeping any copies of the application state (since in Omnistream, the store is a stream of actions). 
 
 In the spirit of [redux-observable](https://github.com/redux-observable/redux-observable), Omnistream is built around the idea of dispatching observables to your store. This allows you to compose some complicated async logic fairly easily.  
 
